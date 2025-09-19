@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "128010174723",
+    "project_id": "coffe-well-doco",
+    "storage_bucket": "coffe-well-doco.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:128010174723:android:b7bd7fa062cedb18272936",
+        "android_client_info": {
+          "package_name": "com.example.cafe_well_doco"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6K4fFMhPed8aTG56nh7VNinDpXTehBSM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
