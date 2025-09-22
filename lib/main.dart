@@ -19,11 +19,11 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: Colors.black,
-        textTheme: GoogleFonts.montserratTextTheme(
-          ThemeData(brightness: Brightness.dark).textTheme,
-        ),
+        brightness: Brightness.light,
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF60A5FA)),
+        useMaterial3: true,
+        textTheme: GoogleFonts.interTextTheme(),
+        scaffoldBackgroundColor: Colors.white,
       ),
       home: const LoginPage(),
     );

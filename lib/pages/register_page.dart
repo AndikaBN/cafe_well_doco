@@ -1,25 +1,29 @@
-import 'dart:async';
-import 'dart:ui';
-
-import 'package:cafe_well_doco/pages/register_page.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage>
+class _RegisterPageState extends State<RegisterPage>
     with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
+
+  final _fullName = TextEditingController();
   final _email = TextEditingController();
+  final _phone = TextEditingController();
   final _password = TextEditingController();
-  bool _obscure = true;
+  final _confirm = TextEditingController();
+
+  bool _obscurePwd = true;
+  bool _obscureConfirm = true;
+  bool _acceptTerms = false;
   bool _loading = false;
 
   late final AnimationController _floatController;
+
   @override
   void initState() {
     super.initState();
@@ -32,45 +36,58 @@ class _LoginPageState extends State<LoginPage>
   @override
   void dispose() {
     _floatController.dispose();
+    _fullName.dispose();
     _email.dispose();
+    _phone.dispose();
     _password.dispose();
+    _confirm.dispose();
     super.dispose();
   }
 
-  Future<void> _onSignIn() async {
+  Future<void> _onRegister() async {
     if (!_formKey.currentState!.validate()) return;
+    if (!_acceptTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Silakan setujui syarat & ketentuan')),
+      );
+      return;
+    }
+
     setState(() => _loading = true);
     await Future.delayed(
       const Duration(seconds: 1, milliseconds: 400),
-    ); // simulasi
+    ); // simulasi register
     if (!mounted) return;
     setState(() => _loading = false);
+
+    // Demo: tampilkan snackbar sukses. Ganti dengan logic nyata (API call, navigate, dsb).
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: const [
-            Icon(Icons.check_circle_outline),
+            Icon(Icons.check_circle, color: Colors.white),
             SizedBox(width: 8),
-            Text('Berhasil login (demo)'),
+            Text('Registrasi berhasil (demo)'),
           ],
         ),
+        backgroundColor: Colors.green.shade600,
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final maxWidth = 480.0;
+    final maxWidth = 520.0;
     return Scaffold(
       body: SafeArea(
         child: Stack(
           children: [
-            // Sky gradient background with subtle clouds
             const Positioned.fill(child: _SkyBackground()),
-            // Floating decorative circle (animated)
+
+            // floating circle accent
             Positioned(
-              right: -60,
-              top: 40,
+              left: -60,
+              bottom: 40,
               child: AnimatedBuilder(
                 animation: _floatController,
                 builder: (context, child) {
@@ -81,14 +98,14 @@ class _LoginPageState extends State<LoginPage>
                   );
                 },
                 child: Opacity(
-                  opacity: 0.18,
+                  opacity: 0.14,
                   child: Container(
-                    width: 220,
-                    height: 220,
+                    width: 200,
+                    height: 200,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: LinearGradient(
-                        colors: [Colors.lightBlue.shade200, Colors.white],
+                        colors: [Colors.white, Colors.lightBlue.shade200],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -97,75 +114,28 @@ class _LoginPageState extends State<LoginPage>
                 ),
               ),
             ),
-            // Center card
+
+            // content
             Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 40,
+                  horizontal: 20,
+                  vertical: 36,
                 ),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(maxWidth: maxWidth),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Header
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.blue.shade50,
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 6),
-                                ),
-                              ],
-                            ),
-                            child: Image.asset(
-                              "assets/images/coffe-logo.jpeg",
-                              width: 42,
-                              height: 42,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          const SizedBox(width: 14),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Welcome to Coffe Well Doco',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.blueGrey.shade900,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'Masuk ke akun kamu',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.blueGrey.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 22),
-                      // Card (frost-like but bright)
+                      // Card
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(18),
+                          borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.blueGrey.shade50,
-                              blurRadius: 24,
+                              blurRadius: 20,
                               offset: const Offset(0, 12),
                             ),
                           ],
@@ -173,12 +143,47 @@ class _LoginPageState extends State<LoginPage>
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 18,
-                            vertical: 20,
+                            vertical: 18,
                           ),
                           child: Form(
                             key: _formKey,
                             child: Column(
                               children: [
+                                Column(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+                                      width: 86,
+                                      height: 86,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.lightBlue.shade100,
+                                          width: 2,
+                                        ),
+                                      ),
+                                      child: Image.asset(
+                                        "assets/images/coffe-logo.jpeg",
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 14),
+                                // Full name
+                                _buildField(
+                                  controller: _fullName,
+                                  hint: 'Nama lengkap',
+                                  prefix: Icons.person_outline,
+                                  validator: (v) {
+                                    if (v == null || v.trim().isEmpty)
+                                      return 'Nama tidak boleh kosong';
+                                    if (v.trim().length < 2)
+                                      return 'Nama terlalu pendek';
+                                    return null;
+                                  },
+                                ),
+                                const SizedBox(height: 12),
                                 // Email
                                 _buildField(
                                   controller: _email,
@@ -195,38 +200,80 @@ class _LoginPageState extends State<LoginPage>
                                     return null;
                                   },
                                 ),
-                                const SizedBox(height: 14),
+                                const SizedBox(height: 12),
+                                // Phone (optional)
+                                _buildField(
+                                  controller: _phone,
+                                  hint: 'Nomor telepon (opsional)',
+                                  prefix: Icons.phone_iphone,
+                                  keyboardType: TextInputType.phone,
+                                  validator: (v) {
+                                    if (v != null &&
+                                        v.trim().isNotEmpty &&
+                                        !RegExp(r'^[0-9+\-\s]+$').hasMatch(v))
+                                      return 'Nomor telepon tidak valid';
+                                    return null;
+                                  },
+                                ),
+                                const SizedBox(height: 12),
                                 // Password
                                 _buildField(
                                   controller: _password,
                                   hint: 'Password',
                                   prefix: Icons.lock_outline,
-                                  obscure: _obscure,
+                                  obscure: _obscurePwd,
                                   suffix: IconButton(
                                     icon: Icon(
-                                      _obscure
+                                      _obscurePwd
                                           ? Icons.visibility_off
                                           : Icons.visibility,
                                       color: Colors.blueGrey.shade400,
                                     ),
-                                    onPressed: () =>
-                                        setState(() => _obscure = !_obscure),
+                                    onPressed: () => setState(
+                                      () => _obscurePwd = !_obscurePwd,
+                                    ),
                                   ),
                                   validator: (v) {
                                     if (v == null || v.isEmpty)
                                       return 'Password tidak boleh kosong';
                                     if (v.length < 6)
-                                      return 'Minimal 6 karakter';
+                                      return 'Password minimal 6 karakter';
                                     return null;
                                   },
                                 ),
-                                const SizedBox(height: 32),
-                                // Sign in button
+                                const SizedBox(height: 12),
+                                // Confirm password
+                                _buildField(
+                                  controller: _confirm,
+                                  hint: 'Konfirmasi password',
+                                  prefix: Icons.lock,
+                                  obscure: _obscureConfirm,
+                                  suffix: IconButton(
+                                    icon: Icon(
+                                      _obscureConfirm
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
+                                      color: Colors.blueGrey.shade400,
+                                    ),
+                                    onPressed: () => setState(
+                                      () => _obscureConfirm = !_obscureConfirm,
+                                    ),
+                                  ),
+                                  validator: (v) {
+                                    if (v == null || v.isEmpty)
+                                      return 'Konfirmasi password tidak boleh kosong';
+                                    if (v != _password.text)
+                                      return 'Password tidak cocok';
+                                    return null;
+                                  },
+                                ),
+                                const SizedBox(height: 22),
+                                // Register button
                                 SizedBox(
                                   width: double.infinity,
                                   height: 52,
                                   child: ElevatedButton(
-                                    onPressed: _loading ? null : _onSignIn,
+                                    onPressed: _loading ? null : _onRegister,
                                     style: ElevatedButton.styleFrom(
                                       elevation: 6,
                                       backgroundColor: Colors.transparent,
@@ -272,7 +319,7 @@ class _LoginPageState extends State<LoginPage>
                                                 ],
                                               )
                                             : const Text(
-                                                'Masuk',
+                                                'Daftar',
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.w700,
@@ -283,29 +330,26 @@ class _LoginPageState extends State<LoginPage>
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 24),
-                                // signup hint
+                                const SizedBox(height: 12),
+
+                                // Login hint
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Belum punya akun?',
+                                      'Sudah punya akun?',
                                       style: TextStyle(
                                         color: Colors.blueGrey.shade600,
                                       ),
                                     ),
                                     TextButton(
                                       onPressed: () {
-                                        Navigator.push(
+                                        Navigator.of(
                                           context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                RegisterPage(),
-                                          ),
-                                        );
+                                        ).pop(); // kembali ke login
                                       },
                                       child: Text(
-                                        'Daftar',
+                                        'Masuk',
                                         style: TextStyle(
                                           color: Colors.lightBlue.shade700,
                                         ),
@@ -318,10 +362,10 @@ class _LoginPageState extends State<LoginPage>
                           ),
                         ),
                       ),
-                      const SizedBox(height: 18),
-                      // subtle note
+
+                      const SizedBox(height: 14),
                       Text(
-                        'Didesain untuk pengalaman yang ringan & cepat',
+                        'Akunmu aman bersama kami • Privasi terjaga',
                         style: TextStyle(
                           color: Colors.blueGrey.shade400,
                           fontSize: 13,
@@ -332,63 +376,13 @@ class _LoginPageState extends State<LoginPage>
                 ),
               ),
             ),
-            // Top-left small weather card (decor)
-            Positioned(
-              left: 18,
-              top: 18,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.blueGrey.shade50,
-                      blurRadius: 10,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.wb_sunny,
-                      color: Colors.orange.shade400,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Sunny',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.blueGrey.shade800,
-                          ),
-                        ),
-                        Text(
-                          '26°C',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.blueGrey.shade500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),
     );
   }
 
+  // Reusable input builder
   Widget _buildField({
     required TextEditingController controller,
     required String hint,
@@ -413,7 +407,7 @@ class _LoginPageState extends State<LoginPage>
         fillColor: Colors.grey.shade50,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 14,
-          vertical: 16,
+          vertical: 14,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -424,6 +418,7 @@ class _LoginPageState extends State<LoginPage>
   }
 }
 
+/// Simple sky background (reused from login)
 class _SkyBackground extends StatelessWidget {
   const _SkyBackground();
 
@@ -449,7 +444,6 @@ class _SkyPainter extends CustomPainter {
       ).createShader(rect);
     canvas.drawRect(rect, paint);
 
-    // faint cloud blobs
     final cloudPaint = Paint()..color = Colors.white.withOpacity(0.75);
     void drawCloud(double cx, double cy, double scale) {
       canvas.drawCircle(Offset(cx - 60 * scale, cy), 30 * scale, cloudPaint);
@@ -468,11 +462,9 @@ class _SkyPainter extends CustomPainter {
       );
     }
 
-    // place few clouds
-    drawCloud(size.width * 0.2, size.height * 0.18, 1.0);
-    drawCloud(size.width * 0.65, size.height * 0.12, 0.8);
-    drawCloud(size.width * 0.5, size.height * 0.35, 1.2);
-    drawCloud(size.width * 0.18, size.height * 0.48, 0.7);
+    drawCloud(size.width * 0.18, size.height * 0.16, 1.0);
+    drawCloud(size.width * 0.6, size.height * 0.12, 0.9);
+    drawCloud(size.width * 0.45, size.height * 0.33, 1.1);
   }
 
   @override
