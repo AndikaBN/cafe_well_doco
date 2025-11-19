@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:cafe_well_doco/pages/register_page.dart';
+import 'package:cafe_well_doco/services/auth_service.dart';
+import 'package:cafe_well_doco/pages/admin_home_page.dart';
+import 'package:cafe_well_doco/pages/karyawan_home_page.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,6 +19,7 @@ class _LoginPageState extends State<LoginPage>
   final _formKey = GlobalKey<FormState>();
   final _email = TextEditingController();
   final _password = TextEditingController();
+  final _authService = AuthService();
   bool _obscure = true;
   bool _loading = false;
 
@@ -40,22 +44,42 @@ class _LoginPageState extends State<LoginPage>
   Future<void> _onSignIn() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _loading = true);
-    await Future.delayed(
-      const Duration(seconds: 1, milliseconds: 400),
-    ); // simulasi
+
+    final result = await _authService.signInWithEmail(
+      email: _email.text.trim(),
+      password: _password.text.trim(),
+    );
+
     if (!mounted) return;
     setState(() => _loading = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: const [
-            Icon(Icons.check_circle_outline),
-            SizedBox(width: 8),
-            Text('Berhasil login (demo)'),
-          ],
+
+    if (result['success']) {
+      final user = result['user'];
+
+      // Navigate berdasarkan role
+      if (user.role == 'admin') {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const AdminHomePage()),
+        );
+      } else {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const KaryawanHomePage()),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.white),
+              const SizedBox(width: 8),
+              Expanded(child: Text(result['message'])),
+            ],
+          ),
+          backgroundColor: Colors.red.shade600,
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override

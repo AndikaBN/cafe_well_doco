@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cafe_well_doco/services/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -16,6 +17,8 @@ class _RegisterPageState extends State<RegisterPage>
   final _phone = TextEditingController();
   final _password = TextEditingController();
   final _confirm = TextEditingController();
+  final _inviteCode = TextEditingController();
+  final _authService = AuthService();
 
   bool _obscurePwd = true;
   bool _obscureConfirm = true;
@@ -41,6 +44,7 @@ class _RegisterPageState extends State<RegisterPage>
     _phone.dispose();
     _password.dispose();
     _confirm.dispose();
+    _inviteCode.dispose();
     super.dispose();
   }
 
@@ -54,25 +58,43 @@ class _RegisterPageState extends State<RegisterPage>
     }
 
     setState(() => _loading = true);
-    await Future.delayed(
-      const Duration(seconds: 1, milliseconds: 400),
-    ); // simulasi register
+
+    final result = await _authService.registerWithEmail(
+      email: _email.text.trim(),
+      password: _password.text.trim(),
+      displayName: _fullName.text.trim(),
+      inviteCode: _inviteCode.text.trim().isNotEmpty
+          ? _inviteCode.text.trim()
+          : null,
+    );
+
     if (!mounted) return;
     setState(() => _loading = false);
 
-    // Demo: tampilkan snackbar sukses. Ganti dengan logic nyata (API call, navigate, dsb).
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
-          children: const [
-            Icon(Icons.check_circle, color: Colors.white),
-            SizedBox(width: 8),
-            Text('Registrasi berhasil (demo)'),
+          children: [
+            Icon(
+              result['success'] ? Icons.check_circle : Icons.error_outline,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 8),
+            Expanded(child: Text(result['message'])),
           ],
         ),
-        backgroundColor: Colors.green.shade600,
+        backgroundColor: result['success']
+            ? Colors.green.shade600
+            : Colors.red.shade600,
       ),
     );
+
+    // Jika berhasil, kembali ke login page
+    if (result['success']) {
+      await Future.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -266,6 +288,38 @@ class _RegisterPageState extends State<RegisterPage>
                                       return 'Password tidak cocok';
                                     return null;
                                   },
+                                ),
+                                const SizedBox(height: 12),
+                                // Invite Code (optional)
+                                _buildField(
+                                  controller: _inviteCode,
+                                  hint: 'Kode undangan (opsional)',
+                                  prefix: Icons.confirmation_number_outlined,
+                                  validator: (v) {
+                                    // Optional field, no validation needed
+                                    return null;
+                                  },
+                                ),
+                                const SizedBox(height: 12),
+                                // Checkbox Terms
+                                Row(
+                                  children: [
+                                    Checkbox(
+                                      value: _acceptTerms,
+                                      onChanged: (val) => setState(
+                                        () => _acceptTerms = val ?? false,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                        'Saya menyetujui syarat & ketentuan',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: Colors.blueGrey.shade700,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: 22),
                                 // Register button

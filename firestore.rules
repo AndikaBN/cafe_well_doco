@@ -1,0 +1,135 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function untuk cek apakah user sudah login
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Helper function untuk cek apakah user adalah admin
+    function isAdmin() {
+      return isSignedIn() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // Helper function untuk cek apakah user sudah approved
+    function isApproved() {
+      return isSignedIn() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true;
+    }
+    
+    // Helper function untuk cek apakah user adalah karyawan yang approved
+    function isApprovedKaryawan() {
+      return isSignedIn() && 
+             exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'karyawan' &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true;
+    }
+    
+    // ==================== USERS COLLECTION ====================
+    match /users/{userId} {
+      // Semua authenticated users bisa read users (untuk display name, dll)
+      allow read: if isSignedIn();
+      
+      // User bisa create profile sendiri saat register
+      allow create: if isSignedIn() && 
+                       request.auth.uid == userId &&
+                       request.resource.data.role in ['karyawan', 'admin'] &&
+                       request.resource.data.approved == false;
+      
+      // User bisa update profile sendiri (tapi tidak bisa ubah role & approved)
+      allow update: if isSignedIn() && 
+                       request.auth.uid == userId &&
+                       request.resource.data.role == resource.data.role &&
+                       request.resource.data.approved == resource.data.approved;
+      
+      // Admin bisa update users (untuk approval)
+      allow update: if isAdmin();
+      
+      // Tidak ada yang bisa delete users
+      allow delete: if false;
+    }
+    
+    // ==================== PRODUCTS COLLECTION ====================
+    match /products/{productId} {
+      // Semua authenticated & approved users bisa read products
+      allow read: if isApproved();
+      
+      // Hanya admin yang bisa create, update, delete products
+      allow create, update, delete: if isAdmin();
+    }
+    
+    // ==================== STOCK_IN COLLECTION ====================
+    match /stock_in/{stockInId} {
+      // Semua authenticated & approved users bisa read stock_in logs
+      allow read: if isApproved();
+      
+      // Hanya admin yang bisa create stock_in
+      // Catatan: Update stok products dilakukan via transaction di client
+      allow create: if isAdmin() && 
+                       request.resource.data.adminId == request.auth.uid;
+      
+      // Tidak ada yang bisa update atau delete stock_in logs
+      allow update, delete: if false;
+    }
+    
+    // ==================== STOCK_OUT COLLECTION ====================
+    match /stock_out/{stockOutId} {
+      // Semua authenticated & approved users bisa read stock_out logs
+      allow read: if isApproved();
+      
+      // Stock_out dibuat saat request diproses
+      // Bisa dibuat oleh karyawan (via transaction) atau admin
+      allow create: if isApproved();
+      
+      // Tidak ada yang bisa update atau delete stock_out logs
+      allow update, delete: if false;
+    }
+    
+    // ==================== REQUESTS COLLECTION ====================
+    match /requests/{requestId} {
+      // User bisa read request milik sendiri
+      allow read: if isApproved() && 
+                     (request.auth.uid == resource.data.userId || isAdmin());
+      
+      // Karyawan yang approved bisa create request untuk diri sendiri
+      allow create: if isApprovedKaryawan() && 
+                       request.resource.data.userId == request.auth.uid &&
+                       request.resource.data.status in ['queued', 'done'];
+      
+      // Admin bisa update request (untuk processing)
+      // Karyawan bisa update request sendiri saat create (via transaction untuk direct processing)
+      allow update: if isAdmin() || 
+                       (isApprovedKaryawan() && 
+                        resource.data.userId == request.auth.uid &&
+                        request.resource.data.status == 'done');
+      
+      // Tidak ada yang bisa delete requests
+      allow delete: if false;
+    }
+    
+    // ==================== INVITES COLLECTION ====================
+    match /invites/{inviteCode} {
+      // Semua orang bisa read invites (untuk validasi saat register)
+      // Tapi di production sebaiknya dibatasi hanya yang punya kode
+      allow read: if true;
+      
+      // Hanya admin yang bisa create invites
+      allow create: if isAdmin() && 
+                       request.resource.data.createdByAdminId == request.auth.uid;
+      
+      // Admin atau system (via register) bisa update invites (untuk mark as used)
+      allow update: if isAdmin() || 
+                       (isSignedIn() && 
+                        request.resource.data.used == true && 
+                        request.resource.data.usedBy == request.auth.uid);
+      
+      // Hanya admin yang bisa delete invites
+      allow delete: if isAdmin();
+    }
+  }
+}
