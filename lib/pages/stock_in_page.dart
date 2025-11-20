@@ -112,22 +112,36 @@ class _StockInPageState extends State<StockInPage> {
 
                           final products = snapshot.data!;
 
-                          return DropdownButtonFormField<ProductModel>(
-                            value: _selectedProduct,
+                          // Reset selected product jika tidak ada dalam list
+                          if (_selectedProduct != null &&
+                              !products.any(
+                                (p) => p.id == _selectedProduct!.id,
+                              )) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              setState(() => _selectedProduct = null);
+                            });
+                          }
+
+                          return DropdownButtonFormField<String>(
+                            value: _selectedProduct?.id,
                             decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                               hintText: 'Pilih produk',
                             ),
                             items: products.map((product) {
                               return DropdownMenuItem(
-                                value: product,
+                                value: product.id,
                                 child: Text(
                                   '${product.name} (Stok: ${product.stock} ${product.unit})',
                                 ),
                               );
                             }).toList(),
                             onChanged: (value) {
-                              setState(() => _selectedProduct = value);
+                              setState(() {
+                                _selectedProduct = products.firstWhere(
+                                  (p) => p.id == value,
+                                );
+                              });
                             },
                             validator: (value) {
                               if (value == null) return 'Pilih produk';

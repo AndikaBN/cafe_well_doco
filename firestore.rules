@@ -36,7 +36,8 @@ service cloud.firestore {
       allow read: if isSignedIn();
       
       // User bisa create profile sendiri saat register
-      allow create: if isSignedIn() && 
+      // PENTING: request.auth.uid == userId memastikan user hanya bisa create untuk dirinya sendiri
+      allow create: if request.auth != null && 
                        request.auth.uid == userId &&
                        request.resource.data.role in ['karyawan', 'admin'] &&
                        request.resource.data.approved == false;

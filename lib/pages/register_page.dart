@@ -88,6 +88,7 @@ class _RegisterPageState extends State<RegisterPage>
             : Colors.red.shade600,
       ),
     );
+    print(result);
 
     // Jika berhasil, kembali ke login page
     if (result['success']) {
