@@ -6,6 +6,7 @@ import 'package:cafe_well_doco/services/auth_service.dart';
 import 'package:cafe_well_doco/pages/admin_home_page.dart';
 import 'package:cafe_well_doco/pages/karyawan_home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,8 +23,10 @@ class _LoginPageState extends State<LoginPage>
   final _authService = AuthService();
   bool _obscure = true;
   bool _loading = false;
+  bool _rememberMe = false;
 
   late final AnimationController _floatController;
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +34,37 @@ class _LoginPageState extends State<LoginPage>
       vsync: this,
       duration: const Duration(seconds: 6),
     )..repeat(reverse: true);
+    _loadRememberedCredentials();
+  }
+
+  Future<void> _loadRememberedCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+    final rememberMe = prefs.getBool('rememberMe') ?? false;
+
+    if (rememberMe) {
+      final email = prefs.getString('savedEmail') ?? '';
+      final password = prefs.getString('savedPassword') ?? '';
+
+      setState(() {
+        _rememberMe = rememberMe;
+        _email.text = email;
+        _password.text = password;
+      });
+    }
+  }
+
+  Future<void> _saveCredentials() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (_rememberMe) {
+      await prefs.setBool('rememberMe', true);
+      await prefs.setString('savedEmail', _email.text.trim());
+      await prefs.setString('savedPassword', _password.text.trim());
+    } else {
+      await prefs.remove('rememberMe');
+      await prefs.remove('savedEmail');
+      await prefs.remove('savedPassword');
+    }
   }
 
   @override
@@ -54,6 +88,9 @@ class _LoginPageState extends State<LoginPage>
     setState(() => _loading = false);
 
     if (result['success']) {
+      // Simpan credentials jika remember me dicentang
+      await _saveCredentials();
+
       final user = result['user'];
 
       // Navigate berdasarkan role dengan pushReplacement (hapus history)
@@ -244,7 +281,28 @@ class _LoginPageState extends State<LoginPage>
                                     return null;
                                   },
                                 ),
-                                const SizedBox(height: 32),
+                                const SizedBox(height: 8),
+                                // Remember Me checkbox
+                                Row(
+                                  children: [
+                                    Checkbox(
+                                      value: _rememberMe,
+                                      onChanged: (value) {
+                                        setState(
+                                          () => _rememberMe = value ?? false,
+                                        );
+                                      },
+                                    ),
+                                    Text(
+                                      'Ingat saya',
+                                      style: TextStyle(
+                                        color: Colors.blueGrey.shade600,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 24),
                                 // Sign in button
                                 SizedBox(
                                   width: double.infinity,
