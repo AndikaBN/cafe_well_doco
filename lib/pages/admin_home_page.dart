@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cafe_well_doco/services/auth_service.dart';
 import 'package:cafe_well_doco/models/user_model.dart';
 import 'package:cafe_well_doco/pages/splash_page.dart';
+import 'package:cafe_well_doco/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:cafe_well_doco/pages/product_management_page.dart';
 import 'package:cafe_well_doco/pages/user_approval_page.dart';
 import 'package:cafe_well_doco/pages/invites_page.dart';
@@ -76,6 +78,17 @@ class _AdminHomePageState extends State<AdminHomePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         actions: [
+          IconButton(
+            icon: Icon(
+              Provider.of<ThemeProvider>(context).isDarkMode
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+            onPressed: () {
+              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+            },
+            tooltip: 'Ganti Tema',
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: _signOut,

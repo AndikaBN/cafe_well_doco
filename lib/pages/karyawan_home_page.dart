@@ -6,6 +6,8 @@ import 'package:cafe_well_doco/models/user_model.dart';
 import 'package:cafe_well_doco/models/product_model.dart';
 import 'package:cafe_well_doco/models/request_model.dart';
 import 'package:cafe_well_doco/pages/splash_page.dart';
+import 'package:cafe_well_doco/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:cafe_well_doco/pages/create_request_page.dart';
 import 'package:cafe_well_doco/pages/my_requests_page.dart';
 
@@ -78,6 +80,17 @@ class _KaryawanHomePageState extends State<KaryawanHomePage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         actions: [
+          IconButton(
+            icon: Icon(
+              Provider.of<ThemeProvider>(context).isDarkMode
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+            onPressed: () {
+              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+            },
+            tooltip: 'Ganti Tema',
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: _signOut,

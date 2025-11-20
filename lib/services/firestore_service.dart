@@ -371,14 +371,18 @@ class FirestoreService {
       query = query.where('status', isEqualTo: status);
     }
 
-    return query
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map(
-          (snapshot) => snapshot.docs
-              .map((doc) => RequestModel.fromFirestore(doc))
-              .toList(),
-        );
+    // Tidak pakai orderBy untuk menghindari composite index
+    // Sorting akan dilakukan di client-side
+    return query.snapshots().map((snapshot) {
+      final requests = snapshot.docs
+          .map((doc) => RequestModel.fromFirestore(doc))
+          .toList();
+
+      // Sort di client-side berdasarkan createdAt (descending - terbaru dulu)
+      requests.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      return requests;
+    });
   }
 
   // ==================== USERS (Admin) ====================
@@ -391,13 +395,18 @@ class FirestoreService {
       query = query.where('approved', isEqualTo: approved);
     }
 
-    return query
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map(
-          (snapshot) =>
-              snapshot.docs.map((doc) => UserModel.fromFirestore(doc)).toList(),
-        );
+    // Tidak pakai orderBy untuk menghindari composite index
+    // Sorting akan dilakukan di client-side jika perlu
+    return query.snapshots().map((snapshot) {
+      final users = snapshot.docs
+          .map((doc) => UserModel.fromFirestore(doc))
+          .toList();
+
+      // Sort di client-side berdasarkan createdAt (descending)
+      users.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+      return users;
+    });
   }
 
   /// Approve atau reject user (admin only)
