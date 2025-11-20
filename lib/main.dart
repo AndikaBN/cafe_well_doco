@@ -1,4 +1,4 @@
-import 'package:cafe_well_doco/pages/login_page.dart';
+import 'package:cafe_well_doco/pages/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.interTextTheme(),
         scaffoldBackgroundColor: Colors.white,
       ),
-      home: const LoginPage(),
+      home: const SplashPage(),
     );
   }
 }

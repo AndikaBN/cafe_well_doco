@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage>
     if (result['success']) {
       final user = result['user'];
 
-      // Navigate berdasarkan role
+      // Navigate berdasarkan role dengan pushReplacement (hapus history)
       if (user.role == 'admin') {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const AdminHomePage()),

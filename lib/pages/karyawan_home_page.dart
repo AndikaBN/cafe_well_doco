@@ -5,7 +5,7 @@ import 'package:cafe_well_doco/services/firestore_service.dart';
 import 'package:cafe_well_doco/models/user_model.dart';
 import 'package:cafe_well_doco/models/product_model.dart';
 import 'package:cafe_well_doco/models/request_model.dart';
-import 'package:cafe_well_doco/pages/login_page.dart';
+import 'package:cafe_well_doco/pages/splash_page.dart';
 import 'package:cafe_well_doco/pages/create_request_page.dart';
 import 'package:cafe_well_doco/pages/my_requests_page.dart';
 
@@ -61,7 +61,7 @@ class _KaryawanHomePageState extends State<KaryawanHomePage> {
       await _authService.signOut();
       if (mounted) {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (_) => const LoginPage()),
+          MaterialPageRoute(builder: (_) => const SplashPage()),
           (route) => false,
         );
       }
