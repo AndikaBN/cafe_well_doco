@@ -106,7 +106,7 @@ class _SplashPageState extends State<SplashPage> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFe8f6ff), Color(0xFFdff4ff), Color(0xFFbfe8ff)],
+            colors: [Color(0xFF1A1410), Color(0xFF2D1F17)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -119,13 +119,13 @@ class _SplashPageState extends State<SplashPage> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: const Color(0xFF3D2817),
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.blue.shade100,
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
+                      color: const Color(0xFF8B6F47).withOpacity(0.4),
+                      blurRadius: 30,
+                      spreadRadius: 10,
                     ),
                   ],
                 ),
@@ -140,19 +140,27 @@ class _SplashPageState extends State<SplashPage> {
               Text(
                 'Coffee Well Doco',
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blueGrey.shade900,
+                  color: const Color(0xFFD4A574),
+                  letterSpacing: 1.2,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Inventory Management System',
-                style: TextStyle(fontSize: 14, color: Colors.blueGrey.shade600),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: const Color(0xFF8B6F47),
+                  letterSpacing: 0.5,
+                ),
               ),
               const SizedBox(height: 40),
               // Loading indicator
-              CircularProgressIndicator(color: Colors.lightBlue.shade700),
+              CircularProgressIndicator(
+                color: const Color(0xFF8B6F47),
+                strokeWidth: 3,
+              ),
             ],
           ),
         ),
