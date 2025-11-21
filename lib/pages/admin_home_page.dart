@@ -11,6 +11,7 @@ import 'package:cafe_well_doco/pages/invites_page.dart';
 import 'package:cafe_well_doco/pages/requests_management_page.dart';
 import 'package:cafe_well_doco/pages/stock_in_page.dart';
 import 'package:cafe_well_doco/pages/sample_data_seeder_page.dart';
+import 'package:cafe_well_doco/pages/reports_page.dart';
 
 /// Halaman utama untuk Admin
 class AdminHomePage extends StatefulWidget {
@@ -255,6 +256,19 @@ class _AdminHomePageState extends State<AdminHomePage> {
                         MaterialPageRoute(
                           builder: (_) => const SampleDataSeederPage(),
                         ),
+                      );
+                    },
+                  ),
+                  _buildMenuCard(
+                    context,
+                    icon: Icons.assessment,
+                    title: 'Laporan',
+                    subtitle: 'Laporan pengambilan barang',
+                    color: Colors.indigo,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ReportsPage()),
                       );
                     },
                   ),

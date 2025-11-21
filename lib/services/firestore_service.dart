@@ -505,4 +505,32 @@ class FirestoreService {
       };
     }
   }
+
+  // ==================== STOCK OUT (Reports) ====================
+
+  /// Stream untuk monitor stock out (laporan)
+  Stream<List<StockOutModel>> getStockOutStream() {
+    return _firestore
+        .collection('stock_out')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => StockOutModel.fromFirestore(doc))
+              .toList(),
+        );
+  }
+
+  /// Get user by ID untuk keperluan laporan
+  Future<UserModel?> getUserById(String userId) async {
+    try {
+      final doc = await _firestore.collection('users').doc(userId).get();
+      if (doc.exists) {
+        return UserModel.fromFirestore(doc);
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
 }
