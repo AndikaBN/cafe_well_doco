@@ -38,11 +38,37 @@ class _ReportsPageState extends State<ReportsPage> {
     final stream = _firestoreService.getStockOutStream();
     final allData = await stream.first;
 
-    // Filter berdasarkan tanggal
+    print('DEBUG: Total stock_out records: ${allData.length}');
+
+    // Normalisasi tanggal untuk filter yang tepat
+    final startOfDay = DateTime(
+      _startDate!.year,
+      _startDate!.month,
+      _startDate!.day,
+    );
+    final endOfDay = DateTime(
+      _endDate!.year,
+      _endDate!.month,
+      _endDate!.day,
+      23,
+      59,
+      59,
+    );
+
+    print('DEBUG: Filter range: $startOfDay to $endOfDay');
+
+    // Filter berdasarkan tanggal - gunakan isAfter/isBefore atau sama dengan
     final filtered = allData.where((item) {
-      return item.timestamp.isAfter(_startDate!) &&
-          item.timestamp.isBefore(_endDate!.add(const Duration(days: 1)));
+      final inRange =
+          !item.timestamp.isBefore(startOfDay) &&
+          !item.timestamp.isAfter(endOfDay);
+      print(
+        'DEBUG: ${item.id} - timestamp: ${item.timestamp}, inRange: $inRange',
+      );
+      return inRange;
     }).toList();
+
+    print('DEBUG: Filtered records: ${filtered.length}');
 
     // Sort by timestamp descending
     filtered.sort((a, b) => b.timestamp.compareTo(a.timestamp));
@@ -98,9 +124,20 @@ class _ReportsPageState extends State<ReportsPage> {
         final user = await _firestoreService.getUserById(stockOut.userId);
         final product = await _firestoreService.getProduct(stockOut.productId);
 
+        // Ambil stock in terakhir sebelum stock out ini terjadi
+        final lastStockIn = await _firestoreService.getLastStockInBeforeTime(
+          productId: stockOut.productId,
+          beforeTime: stockOut.timestamp,
+        );
+
         if (user != null && product != null) {
           // Hitung sisa stok setelah pengambilan
           final remainingStock = product.stock; // Current stock
+
+          // Format tanggal barang masuk
+          final barangMasuk = lastStockIn != null
+              ? DateFormat('dd/MM/yyyy HH:mm').format(lastStockIn.timestamp)
+              : '-';
 
           reportData.add({
             'karyawan': user.displayName,
@@ -110,6 +147,7 @@ class _ReportsPageState extends State<ReportsPage> {
             'barang': product.name,
             'jumlah': '${stockOut.qty} ${product.unit}',
             'sisa': '$remainingStock ${product.unit}',
+            'barangMasuk': barangMasuk,
             'catatan': stockOut.note,
           });
         }
@@ -160,11 +198,12 @@ class _ReportsPageState extends State<ReportsPage> {
             pw.Table(
               border: pw.TableBorder.all(color: PdfColors.grey400),
               columnWidths: {
-                0: const pw.FlexColumnWidth(2),
-                1: const pw.FlexColumnWidth(2),
-                2: const pw.FlexColumnWidth(2.5),
-                3: const pw.FlexColumnWidth(1.5),
-                4: const pw.FlexColumnWidth(1.5),
+                0: const pw.FlexColumnWidth(1.8),
+                1: const pw.FlexColumnWidth(1.8),
+                2: const pw.FlexColumnWidth(2),
+                3: const pw.FlexColumnWidth(1.3),
+                4: const pw.FlexColumnWidth(1.3),
+                5: const pw.FlexColumnWidth(1.8),
               },
               children: [
                 // Header row
@@ -176,6 +215,7 @@ class _ReportsPageState extends State<ReportsPage> {
                     _buildTableCell('Barang', isHeader: true),
                     _buildTableCell('Jumlah', isHeader: true),
                     _buildTableCell('Sisa Stok', isHeader: true),
+                    _buildTableCell('Barang Masuk', isHeader: true),
                   ],
                 ),
                 // Data rows
@@ -187,6 +227,7 @@ class _ReportsPageState extends State<ReportsPage> {
                       _buildTableCell(data['barang']),
                       _buildTableCell(data['jumlah']),
                       _buildTableCell(data['sisa']),
+                      _buildTableCell(data['barangMasuk']),
                     ],
                   ),
                 ),

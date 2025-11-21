@@ -533,4 +533,28 @@ class FirestoreService {
       return null;
     }
   }
+
+  /// Get stock in terakhir untuk produk tertentu sebelum waktu tertentu
+  /// Digunakan untuk mengetahui kapan barang masuk terakhir kali
+  Future<StockInModel?> getLastStockInBeforeTime({
+    required String productId,
+    required DateTime beforeTime,
+  }) async {
+    try {
+      final snapshot = await _firestore
+          .collection('stock_in')
+          .where('productId', isEqualTo: productId)
+          .where('timestamp', isLessThanOrEqualTo: beforeTime)
+          .orderBy('timestamp', descending: true)
+          .limit(1)
+          .get();
+
+      if (snapshot.docs.isNotEmpty) {
+        return StockInModel.fromFirestore(snapshot.docs.first);
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
 }
