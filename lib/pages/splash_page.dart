@@ -130,7 +130,7 @@ class _SplashPageState extends State<SplashPage> {
                   ],
                 ),
                 child: Image.asset(
-                  "assets/images/coffe-logo.jpeg",
+                  "assets/images/logo-coffe.png",
                   width: 80,
                   height: 80,
                   fit: BoxFit.fill,

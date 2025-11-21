@@ -102,38 +102,31 @@ class _RegisterPageState extends State<RegisterPage>
   Widget build(BuildContext context) {
     final maxWidth = 520.0;
     return Scaffold(
+      backgroundColor: const Color(0xFF1A1410), // Dark brown coffee
       body: SafeArea(
         child: Stack(
           children: [
-            const Positioned.fill(child: _SkyBackground()),
-
-            // floating circle accent
-            Positioned(
-              left: -60,
-              bottom: 40,
-              child: AnimatedBuilder(
-                animation: _floatController,
-                builder: (context, child) {
-                  final dy = 12 * (_floatController.value - 0.5);
-                  return Transform.translate(
-                    offset: Offset(0, dy),
-                    child: child,
-                  );
-                },
-                child: Opacity(
-                  opacity: 0.14,
-                  child: Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.lightBlue.shade200],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                  ),
+            // Coffee bean pattern background
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.03,
+                child: Image.asset(
+                  "assets/images/logo-coffe.png",
+                  repeat: ImageRepeat.repeat,
+                  scale: 0.1,
+                ),
+              ),
+            ),
+            // Gradient overlay
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFF1A1410),
+                    const Color(0xFF2D1F17).withOpacity(0.9),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
               ),
             ),
@@ -153,46 +146,61 @@ class _RegisterPageState extends State<RegisterPage>
                       // Card
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
+                          color: const Color(0xFF2D1F17),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: const Color(0xFF3D2817),
+                            width: 1,
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.blueGrey.shade50,
+                              color: Colors.black.withOpacity(0.3),
                               blurRadius: 20,
-                              offset: const Offset(0, 12),
+                              offset: const Offset(0, 10),
                             ),
                           ],
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 18,
-                            vertical: 18,
+                            horizontal: 24,
+                            vertical: 28,
                           ),
                           child: Form(
                             key: _formKey,
                             child: Column(
                               children: [
-                                Column(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(10),
-                                      width: 86,
-                                      height: 86,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white,
-                                        border: Border.all(
-                                          color: Colors.lightBlue.shade100,
-                                          width: 2,
-                                        ),
+                                // Logo
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: const Color(0xFF3D2817),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: const Color(
+                                          0xFF8B6F47,
+                                        ).withOpacity(0.3),
+                                        blurRadius: 15,
+                                        spreadRadius: 3,
                                       ),
-                                      child: Image.asset(
-                                        "assets/images/coffe-logo.jpeg",
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
+                                  child: Image.asset(
+                                    "assets/images/logo-coffe.png",
+                                    width: 60,
+                                    height: 60,
+                                  ),
                                 ),
-                                const SizedBox(height: 14),
+                                const SizedBox(height: 20),
+                                Text(
+                                  'Daftar Akun Baru',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: const Color(0xFFD4A574),
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
                                 // Full name
                                 _buildField(
                                   controller: _fullName,
@@ -310,13 +318,25 @@ class _RegisterPageState extends State<RegisterPage>
                                       onChanged: (val) => setState(
                                         () => _acceptTerms = val ?? false,
                                       ),
+                                      fillColor:
+                                          MaterialStateProperty.resolveWith((
+                                            states,
+                                          ) {
+                                            if (states.contains(
+                                              MaterialState.selected,
+                                            )) {
+                                              return const Color(0xFF8B6F47);
+                                            }
+                                            return const Color(0xFF3D2817);
+                                          }),
+                                      checkColor: const Color(0xFF1A1410),
                                     ),
                                     Expanded(
                                       child: Text(
                                         'Saya menyetujui syarat & ketentuan',
                                         style: TextStyle(
                                           fontSize: 13,
-                                          color: Colors.blueGrey.shade700,
+                                          color: const Color(0xFFB8956A),
                                         ),
                                       ),
                                     ),
@@ -330,62 +350,53 @@ class _RegisterPageState extends State<RegisterPage>
                                   child: ElevatedButton(
                                     onPressed: _loading ? null : _onRegister,
                                     style: ElevatedButton.styleFrom(
-                                      elevation: 6,
-                                      backgroundColor: Colors.transparent,
-                                      padding: EdgeInsets.zero,
+                                      backgroundColor: const Color(0xFF8B6F47),
+                                      foregroundColor: const Color(0xFF1A1410),
+                                      disabledBackgroundColor: const Color(
+                                        0xFF3D2817,
+                                      ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      shadowColor: Colors.lightBlue.shade100,
+                                      elevation: 8,
+                                      shadowColor: const Color(
+                                        0xFF8B6F47,
+                                      ).withOpacity(0.5),
                                     ),
-                                    child: Ink(
-                                      decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            Color(0xFF6BB7FF),
-                                            Color(0xFF3A9BFF),
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: _loading
-                                            ? Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: const [
-                                                  SizedBox(
-                                                    width: 18,
-                                                    height: 18,
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                          color: Colors.white,
-                                                          strokeWidth: 2,
-                                                        ),
-                                                  ),
-                                                  SizedBox(width: 12),
-                                                  Text(
-                                                    'Memproses...',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
+                                    child: _loading
+                                        ? Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: const [
+                                              SizedBox(
+                                                width: 18,
+                                                height: 18,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      color: Color(0xFF1A1410),
+                                                      strokeWidth: 2,
                                                     ),
-                                                  ),
-                                                ],
-                                              )
-                                            : const Text(
-                                                'Daftar',
+                                              ),
+                                              SizedBox(width: 12),
+                                              Text(
+                                                'Memproses...',
                                                 style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w700,
+                                                  fontWeight: FontWeight.bold,
                                                   fontSize: 16,
                                                 ),
                                               ),
-                                      ),
-                                    ),
+                                            ],
+                                          )
+                                        : const Text(
+                                            'Daftar',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
                                   ),
                                 ),
-                                const SizedBox(height: 12),
+                                const SizedBox(height: 16),
 
                                 // Login hint
                                 Row(
@@ -394,7 +405,7 @@ class _RegisterPageState extends State<RegisterPage>
                                     Text(
                                       'Sudah punya akun?',
                                       style: TextStyle(
-                                        color: Colors.blueGrey.shade600,
+                                        color: const Color(0xFF8B6F47),
                                       ),
                                     ),
                                     TextButton(
@@ -406,7 +417,8 @@ class _RegisterPageState extends State<RegisterPage>
                                       child: Text(
                                         'Masuk',
                                         style: TextStyle(
-                                          color: Colors.lightBlue.shade700,
+                                          color: const Color(0xFFD4A574),
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
@@ -418,11 +430,11 @@ class _RegisterPageState extends State<RegisterPage>
                         ),
                       ),
 
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 24),
                       Text(
-                        'Akunmu aman bersama kami • Privasi terjaga',
+                        '☕ Join Our Coffee Community',
                         style: TextStyle(
-                          color: Colors.blueGrey.shade400,
+                          color: const Color(0xFF8B6F47).withOpacity(0.6),
                           fontSize: 13,
                         ),
                       ),
@@ -452,76 +464,35 @@ class _RegisterPageState extends State<RegisterPage>
       obscureText: obscure,
       keyboardType: keyboardType,
       validator: validator,
-      style: const TextStyle(color: Colors.black87),
+      style: const TextStyle(color: Color(0xFFD4A574)),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: Colors.blueGrey.shade300),
-        prefixIcon: Icon(prefix, color: Colors.blueGrey.shade300),
+        hintStyle: TextStyle(color: const Color(0xFF8B6F47).withOpacity(0.6)),
+        prefixIcon: Icon(prefix, color: const Color(0xFF8B6F47)),
         suffixIcon: suffix,
         filled: true,
-        fillColor: Colors.grey.shade50,
+        fillColor: const Color(0xFF3D2817),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 14,
           vertical: 14,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: Color(0xFF4D3827), width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF4D3827), width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF8B6F47), width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFB85C5C), width: 1),
         ),
       ),
     );
   }
-}
-
-/// Simple sky background (reused from login)
-class _SkyBackground extends StatelessWidget {
-  const _SkyBackground();
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(painter: _SkyPainter(), child: Container());
-  }
-}
-
-class _SkyPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final paint = Paint()
-      ..shader = LinearGradient(
-        colors: [
-          const Color(0xFFe8f6ff),
-          const Color(0xFFdff4ff),
-          const Color(0xFFbfe8ff),
-        ],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ).createShader(rect);
-    canvas.drawRect(rect, paint);
-
-    final cloudPaint = Paint()..color = Colors.white.withOpacity(0.75);
-    void drawCloud(double cx, double cy, double scale) {
-      canvas.drawCircle(Offset(cx - 60 * scale, cy), 30 * scale, cloudPaint);
-      canvas.drawCircle(
-        Offset(cx - 20 * scale, cy - 8 * scale),
-        36 * scale,
-        cloudPaint,
-      );
-      canvas.drawCircle(Offset(cx + 20 * scale, cy), 30 * scale, cloudPaint);
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(cx - 60 * scale, cy, 160 * scale, 28 * scale),
-          Radius.circular(14 * scale),
-        ),
-        cloudPaint,
-      );
-    }
-
-    drawCloud(size.width * 0.18, size.height * 0.16, 1.0);
-    drawCloud(size.width * 0.6, size.height * 0.12, 0.9);
-    drawCloud(size.width * 0.45, size.height * 0.33, 1.1);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

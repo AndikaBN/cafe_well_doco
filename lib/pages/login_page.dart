@@ -123,38 +123,31 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     final maxWidth = 480.0;
     return Scaffold(
+      backgroundColor: const Color(0xFF1A1410), // Dark brown coffee
       body: SafeArea(
         child: Stack(
           children: [
-            // Sky gradient background with subtle clouds
-            const Positioned.fill(child: _SkyBackground()),
-            // Floating decorative circle (animated)
-            Positioned(
-              right: -60,
-              top: 40,
-              child: AnimatedBuilder(
-                animation: _floatController,
-                builder: (context, child) {
-                  final dy = 12 * (_floatController.value - 0.5);
-                  return Transform.translate(
-                    offset: Offset(0, dy),
-                    child: child,
-                  );
-                },
-                child: Opacity(
-                  opacity: 0.18,
-                  child: Container(
-                    width: 220,
-                    height: 220,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [Colors.lightBlue.shade200, Colors.white],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                  ),
+            // Coffee bean pattern background
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.03,
+                child: Image.asset(
+                  "assets/images/logo-coffe.png",
+                  repeat: ImageRepeat.repeat,
+                  scale: 0.1,
+                ),
+              ),
+            ),
+            // Gradient overlay
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFF1A1410),
+                    const Color(0xFF2D1F17).withOpacity(0.9),
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
               ),
             ),
@@ -170,72 +163,66 @@ class _LoginPageState extends State<LoginPage>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Header
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.blue.shade50,
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 6),
-                                ),
-                              ],
-                            ),
-                            child: Image.asset(
-                              "assets/images/coffe-logo.jpeg",
-                              width: 42,
-                              height: 42,
-                              fit: BoxFit.fill,
-                            ),
-                          ),
-                          const SizedBox(width: 14),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Welcome to Coffe Well Doco',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.blueGrey.shade900,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                'Masuk ke akun kamu',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.blueGrey.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 22),
-                      // Card (frost-like but bright)
+                      // Logo and title
                       Container(
+                        padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(18),
+                          shape: BoxShape.circle,
+                          color: const Color(0xFF3D2817),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.blueGrey.shade50,
-                              blurRadius: 24,
-                              offset: const Offset(0, 12),
+                              color: const Color(0xFF8B6F47).withOpacity(0.3),
+                              blurRadius: 20,
+                              spreadRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: Image.asset(
+                          "assets/images/logo-coffe.png",
+                          width: 70,
+                          height: 70,
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      Text(
+                        'Coffee Well Do & Co',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFFD4A574), // Coffee cream
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Inventory Management System',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: const Color(0xFF8B6F47),
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 40),
+                      // Card
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2D1F17),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: const Color(0xFF3D2817),
+                            width: 1,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
                             ),
                           ],
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 18,
-                            vertical: 20,
-                          ),
+                          padding: const EdgeInsets.all(24),
                           child: Form(
                             key: _formKey,
                             child: Column(
@@ -256,7 +243,7 @@ class _LoginPageState extends State<LoginPage>
                                     return null;
                                   },
                                 ),
-                                const SizedBox(height: 14),
+                                const SizedBox(height: 16),
                                 // Password
                                 _buildField(
                                   controller: _password,
@@ -268,7 +255,7 @@ class _LoginPageState extends State<LoginPage>
                                       _obscure
                                           ? Icons.visibility_off
                                           : Icons.visibility,
-                                      color: Colors.blueGrey.shade400,
+                                      color: const Color(0xFF8B6F47),
                                     ),
                                     onPressed: () =>
                                         setState(() => _obscure = !_obscure),
@@ -292,11 +279,23 @@ class _LoginPageState extends State<LoginPage>
                                           () => _rememberMe = value ?? false,
                                         );
                                       },
+                                      fillColor:
+                                          MaterialStateProperty.resolveWith((
+                                            states,
+                                          ) {
+                                            if (states.contains(
+                                              MaterialState.selected,
+                                            )) {
+                                              return const Color(0xFF8B6F47);
+                                            }
+                                            return const Color(0xFF3D2817);
+                                          }),
+                                      checkColor: const Color(0xFF1A1410),
                                     ),
                                     Text(
                                       'Ingat saya',
                                       style: TextStyle(
-                                        color: Colors.blueGrey.shade600,
+                                        color: const Color(0xFFB8956A),
                                         fontSize: 14,
                                       ),
                                     ),
@@ -310,62 +309,53 @@ class _LoginPageState extends State<LoginPage>
                                   child: ElevatedButton(
                                     onPressed: _loading ? null : _onSignIn,
                                     style: ElevatedButton.styleFrom(
-                                      elevation: 6,
-                                      backgroundColor: Colors.transparent,
-                                      padding: EdgeInsets.zero,
+                                      backgroundColor: const Color(0xFF8B6F47),
+                                      foregroundColor: const Color(0xFF1A1410),
+                                      disabledBackgroundColor: const Color(
+                                        0xFF3D2817,
+                                      ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      shadowColor: Colors.lightBlue.shade100,
+                                      elevation: 8,
+                                      shadowColor: const Color(
+                                        0xFF8B6F47,
+                                      ).withOpacity(0.5),
                                     ),
-                                    child: Ink(
-                                      decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            Color(0xFF6BB7FF),
-                                            Color(0xFF3A9BFF),
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: _loading
-                                            ? Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: const [
-                                                  SizedBox(
-                                                    width: 18,
-                                                    height: 18,
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                          color: Colors.white,
-                                                          strokeWidth: 2,
-                                                        ),
-                                                  ),
-                                                  SizedBox(width: 12),
-                                                  Text(
-                                                    'Memproses...',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
+                                    child: _loading
+                                        ? Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: const [
+                                              SizedBox(
+                                                width: 18,
+                                                height: 18,
+                                                child:
+                                                    CircularProgressIndicator(
+                                                      color: Color(0xFF1A1410),
+                                                      strokeWidth: 2,
                                                     ),
-                                                  ),
-                                                ],
-                                              )
-                                            : const Text(
-                                                'Masuk',
+                                              ),
+                                              SizedBox(width: 12),
+                                              Text(
+                                                'Memproses...',
                                                 style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w700,
+                                                  fontWeight: FontWeight.bold,
                                                   fontSize: 16,
                                                 ),
                                               ),
-                                      ),
-                                    ),
+                                            ],
+                                          )
+                                        : const Text(
+                                            'Masuk',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
                                   ),
                                 ),
-                                const SizedBox(height: 24),
+                                const SizedBox(height: 20),
                                 // signup hint
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -373,7 +363,7 @@ class _LoginPageState extends State<LoginPage>
                                     Text(
                                       'Belum punya akun?',
                                       style: TextStyle(
-                                        color: Colors.blueGrey.shade600,
+                                        color: const Color(0xFF8B6F47),
                                       ),
                                     ),
                                     TextButton(
@@ -389,7 +379,8 @@ class _LoginPageState extends State<LoginPage>
                                       child: Text(
                                         'Daftar',
                                         style: TextStyle(
-                                          color: Colors.lightBlue.shade700,
+                                          color: const Color(0xFFD4A574),
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
@@ -400,68 +391,17 @@ class _LoginPageState extends State<LoginPage>
                           ),
                         ),
                       ),
-                      const SizedBox(height: 18),
-                      // subtle note
+                      const SizedBox(height: 24),
+                      // Footer text
                       Text(
-                        'Didesain untuk pengalaman yang ringan & cepat',
+                        '☕ Powered by Coffee Passion',
                         style: TextStyle(
-                          color: Colors.blueGrey.shade400,
+                          color: const Color(0xFF8B6F47).withOpacity(0.6),
                           fontSize: 13,
                         ),
                       ),
                     ],
                   ),
-                ),
-              ),
-            ),
-            // Top-left small weather card (decor)
-            Positioned(
-              left: 18,
-              top: 18,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.blueGrey.shade50,
-                      blurRadius: 10,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.wb_sunny,
-                      color: Colors.orange.shade400,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Sunny',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.blueGrey.shade800,
-                          ),
-                        ),
-                        Text(
-                          '26°C',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.blueGrey.shade500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -485,78 +425,35 @@ class _LoginPageState extends State<LoginPage>
       obscureText: obscure,
       keyboardType: keyboardType,
       validator: validator,
-      style: const TextStyle(color: Colors.black87),
+      style: const TextStyle(color: Color(0xFFD4A574)),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: Colors.blueGrey.shade300),
-        prefixIcon: Icon(prefix, color: Colors.blueGrey.shade300),
+        hintStyle: TextStyle(color: const Color(0xFF8B6F47).withOpacity(0.6)),
+        prefixIcon: Icon(prefix, color: const Color(0xFF8B6F47)),
         suffixIcon: suffix,
         filled: true,
-        fillColor: Colors.grey.shade50,
+        fillColor: const Color(0xFF3D2817),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 14,
           vertical: 16,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderSide: const BorderSide(color: Color(0xFF4D3827), width: 1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF4D3827), width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF8B6F47), width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFB85C5C), width: 1),
         ),
       ),
     );
   }
-}
-
-class _SkyBackground extends StatelessWidget {
-  const _SkyBackground();
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(painter: _SkyPainter(), child: Container());
-  }
-}
-
-class _SkyPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final paint = Paint()
-      ..shader = LinearGradient(
-        colors: [
-          const Color(0xFFe8f6ff),
-          const Color(0xFFdff4ff),
-          const Color(0xFFbfe8ff),
-        ],
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-      ).createShader(rect);
-    canvas.drawRect(rect, paint);
-
-    // faint cloud blobs
-    final cloudPaint = Paint()..color = Colors.white.withOpacity(0.75);
-    void drawCloud(double cx, double cy, double scale) {
-      canvas.drawCircle(Offset(cx - 60 * scale, cy), 30 * scale, cloudPaint);
-      canvas.drawCircle(
-        Offset(cx - 20 * scale, cy - 8 * scale),
-        36 * scale,
-        cloudPaint,
-      );
-      canvas.drawCircle(Offset(cx + 20 * scale, cy), 30 * scale, cloudPaint);
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(cx - 60 * scale, cy, 160 * scale, 28 * scale),
-          Radius.circular(14 * scale),
-        ),
-        cloudPaint,
-      );
-    }
-
-    // place few clouds
-    drawCloud(size.width * 0.2, size.height * 0.18, 1.0);
-    drawCloud(size.width * 0.65, size.height * 0.12, 0.8);
-    drawCloud(size.width * 0.5, size.height * 0.35, 1.2);
-    drawCloud(size.width * 0.18, size.height * 0.48, 0.7);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
