@@ -60,8 +60,14 @@ service cloud.firestore {
       // Semua authenticated & approved users bisa read products
       allow read: if isApproved();
       
-      // Hanya admin yang bisa create, update, delete products
-      allow create, update, delete: if isAdmin();
+      // Hanya admin yang bisa create, delete products
+      allow create, delete: if isAdmin();
+      
+      // Admin atau karyawan approved bisa update products
+      // Karyawan hanya bisa update field 'stock' (untuk direct request processing)
+      allow update: if isAdmin() || 
+                       (isApprovedKaryawan() && 
+                        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['stock', 'updatedAt']));
     }
     
     // ==================== STOCK_IN COLLECTION ====================
