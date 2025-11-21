@@ -38,8 +38,6 @@ class _ReportsPageState extends State<ReportsPage> {
     final stream = _firestoreService.getStockOutStream();
     final allData = await stream.first;
 
-    print('DEBUG: Total stock_out records: ${allData.length}');
-
     // Normalisasi tanggal untuk filter yang tepat
     final startOfDay = DateTime(
       _startDate!.year,
@@ -55,20 +53,11 @@ class _ReportsPageState extends State<ReportsPage> {
       59,
     );
 
-    print('DEBUG: Filter range: $startOfDay to $endOfDay');
-
     // Filter berdasarkan tanggal - gunakan isAfter/isBefore atau sama dengan
     final filtered = allData.where((item) {
-      final inRange =
-          !item.timestamp.isBefore(startOfDay) &&
+      return !item.timestamp.isBefore(startOfDay) &&
           !item.timestamp.isAfter(endOfDay);
-      print(
-        'DEBUG: ${item.id} - timestamp: ${item.timestamp}, inRange: $inRange',
-      );
-      return inRange;
     }).toList();
-
-    print('DEBUG: Filtered records: ${filtered.length}');
 
     // Sort by timestamp descending
     filtered.sort((a, b) => b.timestamp.compareTo(a.timestamp));
