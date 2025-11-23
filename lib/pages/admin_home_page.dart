@@ -201,21 +201,21 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       );
                     },
                   ),
-                  _buildMenuCard(
-                    context,
-                    icon: Icons.assignment,
-                    title: 'Kelola Request',
-                    subtitle: 'Proses permintaan barang',
-                    color: Colors.orange,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const RequestsManagementPage(),
-                        ),
-                      );
-                    },
-                  ),
+                  // _buildMenuCard(
+                  //   context,
+                  //   icon: Icons.assignment,
+                  //   title: 'Kelola Request',
+                  //   subtitle: 'Proses permintaan barang',
+                  //   color: Colors.orange,
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (_) => const RequestsManagementPage(),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                   _buildMenuCard(
                     context,
                     icon: Icons.people,
@@ -231,34 +231,34 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       );
                     },
                   ),
-                  _buildMenuCard(
-                    context,
-                    icon: Icons.card_giftcard,
-                    title: 'Kode Undangan',
-                    subtitle: 'Buat kode untuk karyawan',
-                    color: Colors.teal,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const InvitesPage()),
-                      );
-                    },
-                  ),
-                  _buildMenuCard(
-                    context,
-                    icon: Icons.upload_file,
-                    title: 'Sample Data',
-                    subtitle: 'Populate data produk',
-                    color: Colors.purple,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const SampleDataSeederPage(),
-                        ),
-                      );
-                    },
-                  ),
+                  // _buildMenuCard(
+                  //   context,
+                  //   icon: Icons.card_giftcard,
+                  //   title: 'Kode Undangan',
+                  //   subtitle: 'Buat kode untuk karyawan',
+                  //   color: Colors.teal,
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(builder: (_) => const InvitesPage()),
+                  //     );
+                  //   },
+                  // ),
+                  // _buildMenuCard(
+                  //   context,
+                  //   icon: Icons.upload_file,
+                  //   title: 'Sample Data',
+                  //   subtitle: 'Populate data produk',
+                  //   color: Colors.purple,
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (_) => const SampleDataSeederPage(),
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
                   _buildMenuCard(
                     context,
                     icon: Icons.assessment,
