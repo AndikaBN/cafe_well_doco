@@ -244,21 +244,21 @@ class _AdminHomePageState extends State<AdminHomePage> {
                       );
                     },
                   ),
-                  // _buildMenuCard(
-                  //   context,
-                  //   icon: Icons.upload_file,
-                  //   title: 'Sample Data',
-                  //   subtitle: 'Populate data produk',
-                  //   color: Colors.purple,
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (_) => const SampleDataSeederPage(),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
+                  _buildMenuCard(
+                    context,
+                    icon: Icons.upload_file,
+                    title: 'Sample Data',
+                    subtitle: 'Populate data produk',
+                    color: Colors.purple,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SampleDataSeederPage(),
+                        ),
+                      );
+                    },
+                  ),
                   _buildMenuCard(
                     context,
                     icon: Icons.assessment,

@@ -138,7 +138,7 @@ class _SplashPageState extends State<SplashPage> {
               ),
               const SizedBox(height: 24),
               Text(
-                'Coffee Well Doco',
+                'Coffee Well Do & co',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
