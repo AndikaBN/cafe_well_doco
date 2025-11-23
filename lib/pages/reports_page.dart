@@ -68,6 +68,56 @@ class _ReportsPageState extends State<ReportsPage> {
     });
   }
 
+  Future<void> _backfillStockOut() async {
+    // Show loading
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
+    );
+
+    final result = await _firestoreService.backfillStockOut();
+
+    if (mounted) {
+      Navigator.pop(context); // Close loading
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(
+            result['success'] ? 'Berhasil' : 'Gagal',
+            style: TextStyle(
+              color: result['success'] ? Colors.green : Colors.red,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(result['message']),
+              if (result['created'] > 0) ...[
+                const SizedBox(height: 12),
+                Text(
+                  'Data yang dibuat: ${result['created']}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _loadData(); // Reload data
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   Future<void> _selectDateRange() async {
     final picked = await showDateRangePicker(
       context: context,
@@ -319,6 +369,11 @@ class _ReportsPageState extends State<ReportsPage> {
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.sync),
+            onPressed: _backfillStockOut,
+            tooltip: 'Sinkronisasi Data',
+          ),
           IconButton(
             icon: const Icon(Icons.picture_as_pdf),
             onPressed: _generatePDF,

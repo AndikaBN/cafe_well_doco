@@ -557,4 +557,82 @@ class FirestoreService {
       return null;
     }
   }
+
+  /// Backfill stock_out dari request yang sudah done tapi belum punya stock_out
+  /// Method ini untuk fix data lama yang tidak memiliki stock_out record
+  Future<Map<String, dynamic>> backfillStockOut() async {
+    try {
+      int created = 0;
+      int skipped = 0;
+      List<String> errors = [];
+
+      // Ambil semua request dengan status done
+      final requestsSnapshot = await _firestore
+          .collection('requests')
+          .where('status', isEqualTo: 'done')
+          .get();
+
+      // Ambil semua stock_out yang ada
+      final stockOutSnapshot = await _firestore.collection('stock_out').get();
+
+      // Buat Set dari kombinasi userId+productId+timestamp untuk cek duplikat
+      final existingStockOuts = <String>{};
+      for (var doc in stockOutSnapshot.docs) {
+        final data = doc.data();
+        final key =
+            '${data['userId']}_${data['productId']}_${(data['timestamp'] as Timestamp).millisecondsSinceEpoch}';
+        existingStockOuts.add(key);
+      }
+
+      // Proses setiap request
+      for (var requestDoc in requestsSnapshot.docs) {
+        try {
+          final data = requestDoc.data();
+          final userId = data['userId'] as String;
+          final productId = data['productId'] as String;
+          final qty = data['qty'] as int;
+          final note = data['note'] as String? ?? '';
+          final processedAt = data['processedAt'] as Timestamp?;
+
+          if (processedAt == null) {
+            skipped++;
+            continue;
+          }
+
+          // Cek apakah sudah ada stock_out untuk request ini
+          final key =
+              '${userId}_${productId}_${processedAt.millisecondsSinceEpoch}';
+
+          if (existingStockOuts.contains(key)) {
+            skipped++;
+            continue;
+          }
+
+          // Buat stock_out baru
+          await _firestore.collection('stock_out').add({
+            'productId': productId,
+            'qty': qty,
+            'userId': userId,
+            'timestamp': processedAt,
+            'note': note,
+          });
+
+          created++;
+        } catch (e) {
+          errors.add('Request ${requestDoc.id}: ${e.toString()}');
+        }
+      }
+
+      return {
+        'success': true,
+        'message':
+            'Backfill selesai. Dibuat: $created, Dilewati: $skipped${errors.isNotEmpty ? ', Error: ${errors.length}' : ''}',
+        'created': created,
+        'skipped': skipped,
+        'errors': errors,
+      };
+    } catch (e) {
+      return {'success': false, 'message': 'Gagal backfill: ${e.toString()}'};
+    }
+  }
 }
