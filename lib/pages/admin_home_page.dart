@@ -7,10 +7,7 @@ import 'package:cafe_well_doco/providers/theme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:cafe_well_doco/pages/product_management_page.dart';
 import 'package:cafe_well_doco/pages/user_approval_page.dart';
-import 'package:cafe_well_doco/pages/invites_page.dart';
-import 'package:cafe_well_doco/pages/requests_management_page.dart';
 import 'package:cafe_well_doco/pages/stock_in_page.dart';
-import 'package:cafe_well_doco/pages/sample_data_seeder_page.dart';
 import 'package:cafe_well_doco/pages/reports_page.dart';
 
 /// Halaman utama untuk Admin

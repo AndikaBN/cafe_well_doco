@@ -163,30 +163,24 @@ class _ReportsPageState extends State<ReportsPage> {
         final user = await _firestoreService.getUserById(stockOut.userId);
         final product = await _firestoreService.getProduct(stockOut.productId);
 
-        // Ambil stock in terakhir sebelum stock out ini terjadi
-        final lastStockIn = await _firestoreService.getLastStockInBeforeTime(
-          productId: stockOut.productId,
-          beforeTime: stockOut.timestamp,
-        );
-
         if (user != null && product != null) {
           // Hitung sisa stok setelah pengambilan
           final remainingStock = product.stock; // Current stock
 
-          // Format tanggal barang masuk
-          final barangMasuk = lastStockIn != null
-              ? DateFormat('dd/MM/yyyy HH:mm').format(lastStockIn.timestamp)
-              : '-';
+          // Format tanggal bahan masuk dari product.updatedAt
+          final bahanMasuk = DateFormat(
+            'dd/MM/yyyy HH:mm',
+          ).format(product.updatedAt);
 
           reportData.add({
             'karyawan': user.displayName,
             'tanggal': DateFormat(
               'dd/MM/yyyy HH:mm',
             ).format(stockOut.timestamp),
-            'barang': product.name,
-            'jumlah': '${stockOut.qty} ${product.unit}',
-            'sisa': '$remainingStock ${product.unit}',
-            'barangMasuk': barangMasuk,
+            'bahanMasuk': bahanMasuk,
+            'bahanKeluar': product.name,
+            'jumlahKeluar': '${stockOut.qty} ${product.unit}',
+            'stok': '$remainingStock ${product.unit}',
             'catatan': stockOut.note,
           });
         }
@@ -240,9 +234,9 @@ class _ReportsPageState extends State<ReportsPage> {
                 0: const pw.FlexColumnWidth(1.8),
                 1: const pw.FlexColumnWidth(1.8),
                 2: const pw.FlexColumnWidth(2),
-                3: const pw.FlexColumnWidth(1.3),
-                4: const pw.FlexColumnWidth(1.3),
-                5: const pw.FlexColumnWidth(1.8),
+                3: const pw.FlexColumnWidth(2),
+                4: const pw.FlexColumnWidth(1.5),
+                5: const pw.FlexColumnWidth(1.5),
               },
               children: [
                 // Header row
@@ -251,10 +245,10 @@ class _ReportsPageState extends State<ReportsPage> {
                   children: [
                     _buildTableCell('Karyawan', isHeader: true),
                     _buildTableCell('Tanggal', isHeader: true),
-                    _buildTableCell('Barang', isHeader: true),
+                    _buildTableCell('Bahan Masuk', isHeader: true),
+                    _buildTableCell('Bahan Keluar', isHeader: true),
                     _buildTableCell('Jumlah', isHeader: true),
-                    _buildTableCell('Sisa Stok', isHeader: true),
-                    _buildTableCell('Barang Masuk', isHeader: true),
+                    _buildTableCell('Stok', isHeader: true),
                   ],
                 ),
                 // Data rows
@@ -263,10 +257,10 @@ class _ReportsPageState extends State<ReportsPage> {
                     children: [
                       _buildTableCell(data['karyawan']),
                       _buildTableCell(data['tanggal']),
-                      _buildTableCell(data['barang']),
-                      _buildTableCell(data['jumlah']),
-                      _buildTableCell(data['sisa']),
-                      _buildTableCell(data['barangMasuk']),
+                      _buildTableCell(data['bahanMasuk']),
+                      _buildTableCell(data['bahanKeluar']),
+                      _buildTableCell(data['jumlahKeluar']),
+                      _buildTableCell(data['stok']),
                     ],
                   ),
                 ),
@@ -487,8 +481,8 @@ class _ReportsPageState extends State<ReportsPage> {
                                   child: Column(
                                     children: [
                                       _buildDetailRow(
-                                        'Barang',
-                                        data['barang'] ?? '-',
+                                        'Bahan',
+                                        data['bahan'] ?? '-',
                                       ),
                                       const Divider(),
                                       _buildDetailRow(
@@ -552,7 +546,7 @@ class _ReportsPageState extends State<ReportsPage> {
 
     return {
       'karyawan': user?.displayName ?? 'Unknown',
-      'barang': product?.name ?? 'Unknown',
+      'bahan': product?.name ?? 'Unknown',
       'jumlah': '${stockOut.qty} ${product?.unit ?? ''}',
       'sisa': '${product?.stock ?? 0} ${product?.unit ?? ''}',
     };
