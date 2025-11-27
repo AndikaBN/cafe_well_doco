@@ -178,6 +178,8 @@ class _ReportsPageState extends State<ReportsPage> {
               'dd/MM/yyyy HH:mm',
             ).format(stockOut.timestamp),
             'bahanMasuk': bahanMasuk,
+            'jumlahMasuk':
+                '${product.stock + stockOut.qty} ${product.unit}', // Stok sebelum diambil
             'bahanKeluar': product.name,
             'jumlahKeluar': '${stockOut.qty} ${product.unit}',
             'stok': '$remainingStock ${product.unit}',
@@ -231,12 +233,13 @@ class _ReportsPageState extends State<ReportsPage> {
             pw.Table(
               border: pw.TableBorder.all(color: PdfColors.grey400),
               columnWidths: {
-                0: const pw.FlexColumnWidth(1.8),
-                1: const pw.FlexColumnWidth(1.8),
-                2: const pw.FlexColumnWidth(2),
-                3: const pw.FlexColumnWidth(2),
-                4: const pw.FlexColumnWidth(1.5),
-                5: const pw.FlexColumnWidth(1.5),
+                0: const pw.FlexColumnWidth(1.5),
+                1: const pw.FlexColumnWidth(1.5),
+                2: const pw.FlexColumnWidth(1.8),
+                3: const pw.FlexColumnWidth(1.3),
+                4: const pw.FlexColumnWidth(1.8),
+                5: const pw.FlexColumnWidth(1.3),
+                6: const pw.FlexColumnWidth(1.3),
               },
               children: [
                 // Header row
@@ -246,8 +249,9 @@ class _ReportsPageState extends State<ReportsPage> {
                     _buildTableCell('Karyawan', isHeader: true),
                     _buildTableCell('Tanggal', isHeader: true),
                     _buildTableCell('Bahan Masuk', isHeader: true),
+                    _buildTableCell('Jumlah Masuk', isHeader: true),
                     _buildTableCell('Bahan Keluar', isHeader: true),
-                    _buildTableCell('Jumlah', isHeader: true),
+                    _buildTableCell('Jumlah Keluar', isHeader: true),
                     _buildTableCell('Stok', isHeader: true),
                   ],
                 ),
@@ -258,6 +262,7 @@ class _ReportsPageState extends State<ReportsPage> {
                       _buildTableCell(data['karyawan']),
                       _buildTableCell(data['tanggal']),
                       _buildTableCell(data['bahanMasuk']),
+                      _buildTableCell(data['jumlahMasuk']),
                       _buildTableCell(data['bahanKeluar']),
                       _buildTableCell(data['jumlahKeluar']),
                       _buildTableCell(data['stok']),
